@@ -4,7 +4,7 @@ This project showcases the power of pathfinding algorithms in a visually captiva
 
 The project dynamically demonstrates Dijkstra's algorithm, a classic method for finding the shortest path between two points in a network. Watch as the LEDs illuminate the optimal route between different towns in the Cotswolds, providing a mesmerising display of computational problem-solving.
 
-[![Cotswolds LED Pathfinder](Dijkstra.png)](https://youtu.be/ZBqJBapf_Ss)
+[![Cotswolds LED Pathfinder](Dijkstras.png)](https://youtu.be/ZBqJBapf_Ss)
 
 **Watch the Cotswolds LED Pathfinder in action:**
 [[YouTube](https://youtu.be/ZBqJBapf_Ss)]
