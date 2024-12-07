@@ -7,9 +7,9 @@ The project dynamically demonstrates Dijkstra's algorithm, a classic method for 
 [![Cotswolds LED Pathfinder](Dijkstras.png)](https://youtu.be/ZBqJBapf_Ss)
 
 **Watch the Cotswolds LED Pathfinder in action:**
-[[YouTube](https://youtu.be/ZBqJBapf_Ss)]
+[YouTube](https://youtu.be/ZBqJBapf_Ss)
 
-**Read the full project write-up:** [Link to project write-up]
+**Read the full project write-up:** [Link to project write-up](https://russelleveleigh.medium.com/taking-dijkstras-shortest-path-through-the-cotswolds-ca23e88576e8?sk=58777b8d94ad9ae4f21a0f120b10fcb9)
 
 ## Features
 
