@@ -22,9 +22,9 @@ import ujson
 numpix = 145
 strip = Neopixel(numpix, 0, 22, "GRB")
 strip.brightness(200)
-
+OPTION = 0
 # ---------------------- #
-# WEB SERVER SETUP       #
+# NETWORK                #
 # ---------------------- #
 
 # Connect to home network
@@ -40,10 +40,22 @@ def connect():
     print("Connection successful")
     print(station.ifconfig())
 
-# Set up the web server
-webserver = tinyweb.webserver()
+connect()
 
+# ---------------------- #  
+# ALGORITHMS             #
+# ---------------------- #
 
+# Function to reset towns
+def reset_towns(towns):
+    for town in towns:
+        town.visited = False
+        town.distance = 9999
+        town.previous = None
+
+# ---------------------- #
+# DIJKSTRA'S ALGORITHM   #
+# ---------------------- #
 
 # Function to fade towns by criteria
 def fade(type, town, start_town=None, end_town=None):
@@ -113,6 +125,8 @@ def get_smallest_distance(towns):
 
 
 def dijkstras(towns):
+    global OPTION
+    OPTION = 0
     for i in range(numpix):
         strip[i] = (10, 0, 0)
     strip.show()
@@ -134,6 +148,10 @@ def dijkstras(towns):
     current_town = start_town
 
     while True:
+        if OPTION != 0:
+            reset_towns(towns)
+            return
+        
         # Set current path to an empty list
         current_path = []
 
@@ -149,27 +167,24 @@ def dijkstras(towns):
 
         # Fade in the path from the start town to the current town
         for town in current_path:
+            if OPTION != 0:
+                reset_towns(towns)
+                return
             fade("in", town, start_town, end_town)
         current_path.reverse()
 
         # If the current town is the end town, reset the towns
-        # and break the loop
+        # and go back to the start of the loop
         if current_town == end_town:
-            # Open path.csv and clear it then create the loop through towns 
-            # and write the town name, distance, visited, and previous town
-            with open("path.csv", "w") as file:
-                file.write("Town,Distance,Visited,Previous\n")
-                for town in towns:
-                    file.write(f"{town.name},{town.distance},{town.visited},{town.previous}\n")
-            for town in towns:
-                town.visited = False
-                town.distance = 9999
-                town.previous = None
+            reset_towns(towns)
             utime.sleep(5)
-            break
+            continue
 
         # Get the neighbours of the current town and fade them in red
         for neighbour in current_town.neighbours:
+            if OPTION != 0:
+                reset_towns(towns)
+                return
             if not neighbour.visited:
                 fade("neighbour_in", neighbour, start_town, end_town)
 
@@ -187,11 +202,17 @@ def dijkstras(towns):
 
         # Fade out the neighbours back to pale red
         for neighbour in current_town.neighbours:
+            if OPTION != 0:
+                reset_towns(towns)
+                return
             if not neighbour.visited:
                 fade("neighbour_out", neighbour, start_town, end_town)
 
         # Fade out the path back to the start town
         for town in current_path:
+            if OPTION != 0:
+                reset_towns(towns)
+                return
             fade("out", town, start_town, end_town)
         utime.sleep(1)
 
@@ -200,17 +221,70 @@ def dijkstras(towns):
         current_town = get_smallest_distance(towns)
 
 # ---------------------- #
-# SET UP ROUTES          #
+# A* ALGORITHM           #
 # ---------------------- #
 
+def astar(towns):
+    global OPTION
+    OPTION = 0
+    # Turn all LEDS on
+    for i in range(numpix):
+        strip[i] = (255, 0, 0)
+    strip.show()
+    while True:
+        if OPTION != 0:
+            for i in range(numpix):
+                strip[i] = (0, 0, 0)
+            strip.show()
+            return
+        time.sleep(2)
+    
+    
+
+
+# ---------------------- #
+# WEBSERVER              #
+# ---------------------- #
+
+def options():
+    while True:
+        time.sleep(1)
+        if OPTION == 1: # Turn on
+            time.sleep(5)
+            dijkstras(towns)
+        elif OPTION == 2: # Turn off
+            time.sleep(5)
+            astar(towns)
+        else:
+            pass
+        print(OPTION)
+
+        
+# Start a new thread 
+_thread.start_new_thread(options,())
+
+# Set up the web server
+app = tinyweb.webserver()
+
 # Set up the web server routes
-@webserver.route("/dijkstra")
+@app.route("/dijkstra")
 def index(request, response):
+    global OPTION
     # Call the dijkstras function
-    dijkstras(towns)
+    OPTION = 1
     # Return a response
     response.send("Dijkstra's algorithm has been run")
 
+@app.route("/astar")
+def index(request, response):
+    global OPTION
+    # Call the dijkstras function
+    OPTION = 2
+    # Return a response
+    response.send("Astar algorithm has been run")
+
+# Run the web server as the sole process
+app.run(host="0.0.0.0", port=80)
 
 
 
