@@ -4,6 +4,8 @@ import gc
 import _thread
 import time
 from machine import Pin
+from dijkstra import dijkstra
+from cotswolds import towns
 
 # Replace with your actual LED pins
 led_pins = [Pin(2, Pin.OUT), Pin(3, Pin.OUT), Pin(4, Pin.OUT)] 
