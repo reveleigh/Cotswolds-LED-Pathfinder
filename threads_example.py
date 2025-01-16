@@ -7,31 +7,15 @@ from machine import Pin
 from dijkstra import dijkstra
 from cotswolds import towns
 
-# Replace with your actual LED pins
-led_pins = [Pin(2, Pin.OUT), Pin(3, Pin.OUT), Pin(4, Pin.OUT)] 
 
-# LED control functions
-def sequence_a():
-  """Your LED sequence for /a"""
-  while True:
-    if stop_threads: 
-      break
-    for led in led_pins:
-      led.on()
-      time.sleep(0.2)
-      led.off()
-      time.sleep(0.2)
 
-def sequence_b():
-  """Your LED sequence for /b"""
+def astar():
   while True:
     if stop_threads:
       break
-    for led in led_pins:
-      led.on()
-      time.sleep(0.5)
-      led.off()
-      time.sleep(0.5)
+    # Placeholder text for now
+    print("A*")
+    time.sleep(1)
 
 def sequence_c():
   """Turn off all LEDs"""
@@ -41,6 +25,11 @@ def sequence_c():
 # Threading variables
 stop_threads = False  # Global flag to signal threads to stop
 threads = []  # List to keep track of running threads
+
+# Call back to get status of stop_threads
+def stop_callback():
+    return stop_threads
+
 
 # Wi-Fi credentials
 ssid = 'Wifi name' 
@@ -59,27 +48,27 @@ except Exception as e:
 def index(request):
     return 'Hello, from Pico'
 
-@app.route('/a')
+@app.route('/dijkstra')
 def route_a(request):
   global stop_threads, threads
   stop_threads = True 
   for t in threads: 
     t.join()
   stop_threads = False 
-  threads.append(_thread.start_new_thread(sequence_a, ()))
-  return "Sequence A started", 200
+  threads.append(_thread.start_new_thread(dijkstra, (towns, stop_callback)))
+  return "Dijkstra started", 200
 
-@app.route('/b')
+@app.route('/astar')
 def route_b(request):
   global stop_threads, threads
   stop_threads = True
   for t in threads:
     t.join()
   stop_threads = False
-  threads.append(_thread.start_new_thread(sequence_b, ()))
-  return "Sequence B started", 200
+  threads.append(_thread.start_new_thread(astar, ()))
+  return "Lights turned off", 200
 
-@app.route('/c')
+@app.route('/off')
 def route_c(request):
   global stop_threads, threads
   stop_threads = True

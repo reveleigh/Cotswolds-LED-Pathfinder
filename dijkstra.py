@@ -75,8 +75,10 @@ def get_smallest_distance(towns):
     return smallest_town
 
 
-def dijkstras(towns):
+def dijkstras(towns, stop_callback):
     while True:
+        if stop_callback():
+            break
         for i in range(numpix):
             strip[i] = (10, 0, 0)
         strip.show()
