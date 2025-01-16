@@ -164,8 +164,6 @@ def dijkstras(towns):
             current_town = get_smallest_distance(towns)
 
 
-dijkstras(towns)
-
 
 
 
