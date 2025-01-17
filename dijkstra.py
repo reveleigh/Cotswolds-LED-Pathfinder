@@ -78,7 +78,12 @@ def get_smallest_distance(towns):
 def dijkstras(towns, stop_callback):
     while True:
         if stop_callback():
-            break
+            return
+        for town in towns:
+            town.visited = False
+            town.distance = 9999
+            town.previous = None
+
         for i in range(numpix):
             strip[i] = (10, 0, 0)
         strip.show()
@@ -100,6 +105,8 @@ def dijkstras(towns, stop_callback):
         current_town = start_town
 
         while True:
+            if stop_callback():
+                return
             # Set current path to an empty list
             current_path = []
 
@@ -115,27 +122,21 @@ def dijkstras(towns, stop_callback):
 
             # Fade in the path from the start town to the current town
             for town in current_path:
+                if stop_callback():
+                    return
                 fade("in", town, start_town, end_town)
             current_path.reverse()
 
             # If the current town is the end town, reset the towns
             # and break the loop
             if current_town == end_town:
-                # Open path.csv and clear it then create the loop through towns 
-                # and write the town name, distance, visited, and previous town
-                with open("path.csv", "w") as file:
-                    file.write("Town,Distance,Visited,Previous\n")
-                    for town in towns:
-                        file.write(f"{town.name},{town.distance},{town.visited},{town.previous}\n")
-                for town in towns:
-                    town.visited = False
-                    town.distance = 9999
-                    town.previous = None
                 utime.sleep(5)
                 break
 
             # Get the neighbours of the current town and fade them in red
             for neighbour in current_town.neighbours:
+                if stop_callback():
+                    return
                 if not neighbour.visited:
                     fade("neighbour_in", neighbour, start_town, end_town)
 
@@ -153,11 +154,15 @@ def dijkstras(towns, stop_callback):
 
             # Fade out the neighbours back to pale red
             for neighbour in current_town.neighbours:
+                if stop_callback():
+                    return
                 if not neighbour.visited:
                     fade("neighbour_out", neighbour, start_town, end_town)
 
             # Fade out the path back to the start town
             for town in current_path:
+                if stop_callback():
+                    return
                 fade("out", town, start_town, end_town)
             utime.sleep(1)
 

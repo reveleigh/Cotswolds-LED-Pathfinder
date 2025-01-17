@@ -7,17 +7,15 @@ from machine import Pin
 from dijkstra import dijkstra
 from cotswolds import towns
 
-
-
 def astar():
   while True:
     if stop_threads:
       break
     # Placeholder text for now
-    print("A*")
+    print("A* running")
     time.sleep(1)
 
-def sequence_c():
+def off():
   """Turn off all LEDs"""
   for led in led_pins:
     led.off()
@@ -66,7 +64,7 @@ def route_b(request):
     t.join()
   stop_threads = False
   threads.append(_thread.start_new_thread(astar, ()))
-  return "Lights turned off", 200
+  return "A* Algorithm running", 200
 
 @app.route('/off')
 def route_c(request):
@@ -74,7 +72,7 @@ def route_c(request):
   stop_threads = True
   for t in threads:
     t.join()
-  sequence_c()
+  off()
   return "All LEDs off", 200
 
 @app.route('memory')
