@@ -4,7 +4,7 @@ import gc
 import _thread
 import time
 from machine import Pin
-from dijkstra import dijkstra
+from dijkstras_threading_webserver import dijkstras
 from cotswolds import towns
 
 def astar():
@@ -16,9 +16,8 @@ def astar():
     time.sleep(1)
 
 def off():
-  """Turn off all LEDs"""
-  for led in led_pins:
-    led.off()
+  #Turn off all LEDs
+  print("Turning off all LEDs")
 
 # Threading variables
 stop_threads = False  # Global flag to signal threads to stop
@@ -53,7 +52,7 @@ def route_a(request):
   for t in threads: 
     t.join()
   stop_threads = False 
-  threads.append(_thread.start_new_thread(dijkstra, (towns, stop_callback)))
+  threads.append(_thread.start_new_thread(dijkstras, (towns, stop_callback)))
   return "Dijkstra started", 200
 
 @app.route('/astar')
@@ -75,7 +74,7 @@ def route_c(request):
   off()
   return "All LEDs off", 200
 
-@app.route('memory')
+@app.route('/memory')
 def memory(request):
     response = '<h1>Free Memory={} bytes</hi>'.format(gc.mem_free())
     return response, {'Content-Type': 'text/html'}
