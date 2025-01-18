@@ -6,6 +6,8 @@ The project dynamically demonstrates Dijkstra's algorithm, a classic method for 
 
 [![Cotswolds LED Pathfinder](Dijkstras.png)](https://youtu.be/ZBqJBapf_Ss)
 
+### Note: you only need main.py, cotwolds.py and neopixel.py to run the project. The other files are for development purposes.
+
 **Watch the Cotswolds LED Pathfinder in action:**
 [YouTube](https://youtu.be/ZBqJBapf_Ss)
 
